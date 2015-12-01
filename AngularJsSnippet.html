@@ -21,14 +21,20 @@
 <div class="col-md-12">
         <section class="panel panel-default">
             <header class="panel-heading">
-                <h2 class="panel-title h4">Consulta</h2>
+                <div class="pull-right">
+                    <a href="cadastro-basico.html" class="btn btn-sm btn-success"><i class="fa fa-plus"></i> Novo</a>
+                    <button type="button" ng-click="ExportaDados()" class="btn btn-default btn-sm" id="exportar"><i class="fa fa-download"> Exportar</i></button>
+                </div>
+
+                <h2 class="panel-title h4">Search</h2>
             </header>
+
             <div class="row wrapper">
                 <div class="col-sm-3">
                     <div class="input-group">
-                        <input type="text" class="form-control input-sm" placeholder="Buscar" ng-model="filtradados">
+                        <input id="txtFiltroPesquisa" type="text" class="form-control input-sm" placeholder="Buscar" ng-model="filtradados">
                         <span class="input-group-btn">
-                            <button class="btn btn-sm btn-default" type="button"><i class="fa fa-search"></i> Buscar</button>
+                            <button class="btn btn-sm btn-default" type="button" ng-click="filtradados = undefined"><i class="fa fa-eraser"></i> Limpar</button>
                         </span>
                     </div>
                 </div>
@@ -56,7 +62,13 @@
                     <thead>
                         <tr>
                             <th width="200">Nome</th>
-                            <th width="25">Matrícula</th>
+                            <th width="25">
+                            	<a href="#" ng-click="sortType = 'Matricula'; sortReverse = !sortReverse">
+                                    Matrícula
+                                    <span ng-show="sortType == 'Matricula' && !sortReverse" class="fa fa-caret-down"></span>
+                                    <span ng-show="sortType == 'Matricula' && sortReverse" class="fa fa-caret-up"></span>
+                                </a>
+                            </th>
                             <th width="50">Contrato</th>
                             <th width="20">Lotação</th>
                             <th width="50">Cargo</th>
@@ -65,12 +77,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr dir-paginate="l in qtd = (X | 
+                        <tr dir-paginate="l in filterResult = (X | 
                                                     filter:filtradados | 
                                                     filter:cboContrato.id:true | 
                                                     filter:cboStatus.id:true | 
                                                     filter:cboCargo.id:true) | 
-                                                    itemsPerPage:8 ">
+                                                    orderBy:sortType:sortReverse | itemsPerPage:pageSize ">
                             <td>{{l.NomX}}</td>
                             <td>{{l.MatX}}</td>
                             <td>{{l.ConX}}</td>
@@ -89,7 +101,7 @@
                 <footer class="panel-footer no-radius">
                     <div class="row">
                         <div class="col-sm-4">
-                            <small class="text-muted inline m-t-sm m-b-sm">Resultado: {{qtd.length}} registros</small>
+                            <small class="text-muted inline m-t-sm m-b-sm">Resultado: {{filterResult.length}} registros</small>
                         </div>
                         <div class="col-sm-8 text-right">
                             <dir-pagination-controls max-size="10" direction-links="true" boundary-links="true"> </dir-pagination-controls>
@@ -106,18 +118,24 @@
 
 
 </div>
-	
-	@section customsJs {
+@section customsJs {
 
     <script src="~/Scripts/jslinq.min.js"></script>
     <script src="~/Scripts/dirPagination.js"></script>
 
-    @*@Scripts.Render("~/App/controllers/EmpregadoController.js")*@
+    @*@Scripts.Render("~/App/controllers/Controller.js")*@
 
     <script type="text/javascript">
 
         var jsonX = @Html.Raw(XSerialized);
         app.controller('XController', ['$scope', '$http', function ($scope, $http) {
+            
+            $scope.sortType = 'Nome'
+            $scope.sortReverse = false;
+            $scope.pageSize = 7;
+
+            $scope.empregados = jsonempregados;
+            $scope.filterResult = jsonX;
             
             $scope.X = jsonX;
 
@@ -137,8 +155,23 @@
                 .orderBy("x => x.key")
                 .select("x => { id: x.key }")                
                 .toArray();
-        }]);
+                
+            $scope.ExportaDados = function () {
 
+                var date = new Date();
+                var options = {
+                    weekday: "short",
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "numeric",
+                    hour:"2-digit",
+                    minute: "2-digit",
+                    second: "2-digit"
+                };
+                var texto = "SYSTEM - X - TITLE\n\User:Teste\n\Relatório gerado automaticamente pelo sistema em: " + date.toLocaleDateString("pt-br", options);
+                ExportCSV($scope.filterResult,texto, true, "csv", "Report");
+            };
+        }]);
     </script>
 }
 	
@@ -479,5 +512,61 @@ appTest.controller('CustomController', ['$scope','$http', function ($scope, $htt
     //    { firstName: 'Blandine', lastName: 'Faivre', birthDate: new Date('1987-04-25'), balance: -2323.22, email: 'oufblandou@gmail.com' },
     //    { firstName: 'Francoise', lastName: 'Frere', birthDate: new Date('1955-08-27'), balance: 42343, email: 'raymondef@gmail.com' }
     //];
+
+function GeraCSV(JSONData, ReportTitle, ShowLabel, reportType, reportName) {
+    
+    var arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData;
+
+    angular.forEach(arrData, function (data, index) {
+        if (data.date != undefined)
+            data.date = dateFormat(data.date)
+    });
+
+    var CSV = '';        
+    CSV += ReportTitle + '\r\n\n';
+    
+    if (ShowLabel) {
+
+        var row = "";        
+        for (var index in arrData[0]) {
+            row += index + ';';
+        }
+
+        row = row.slice(0, -1);        
+        CSV += row + '\r\n';
+    }
+    
+    for (var i = 0; i < arrData.length; i++) {
+
+        var row = "";        
+        for (var index in arrData[i]) {
+            row += '"' + arrData[i][index] + '";';
+        }
+
+        row = row.split('.').join(",");
+        row.slice(0, row.length - 1);        
+        CSV += row + '\r\n';
+    }
+
+    if (CSV == '') {
+        alert("Invalid data");
+        return;
+    }
+    
+    var fileName = "";    
+    fileName += reportName.replace(/ /g, "_");
+    
+    var uri = 'data:text/csv; charset=utf-8,' + escape(CSV);
+
+    var link = document.createElement("a");
+    link.href = uri;
+    
+    link.style = "visibility:hidden";
+    link.download = fileName + ".csv";
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+};
 
 }]);	
