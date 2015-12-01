@@ -92,7 +92,8 @@
                             <td class="text-center">
                                 <a href="#" class="btn btn-default btn-sm" data-toggle="tooltip" title="Visualizar"><i class="fa fa-file-text-o"></i></a>
                                 <a ng-click="editdata(l)" href="#cadastroModal" class="btn btn-default btn-sm" data-toggle="modal" title="Editar"><i class="fa fa-pencil"></i></a>
-                                <a href="#" class="btn btn-danger btn-sm" data-toggle="tooltip" title="Deletar"><i class="fa fa-trash-o"></i></a>
+                                <a href="#" ng-if="l.Status == 'INATIVO'" class="btn btn-default btn-sm" data-toggle="tooltip"><i class="fa fa-check text-success" title="Ativar"></i></a>
+                                <a href="#" ng-if="l.Status == 'ATIVO'" class="btn btn-default btn-sm" data-toggle="tooltip"><i class="fa fa-times text-danger" title="Inativar"></i></a>
                             </td>
                         </tr>
                     </tbody>
@@ -513,7 +514,7 @@ appTest.controller('CustomController', ['$scope','$http', function ($scope, $htt
     //    { firstName: 'Francoise', lastName: 'Frere', birthDate: new Date('1955-08-27'), balance: 42343, email: 'raymondef@gmail.com' }
     //];
 
-function GeraCSV(JSONData, ReportTitle, ShowLabel, reportType, reportName) {
+function ExportCSV(JSONData, ReportTitle, ShowLabel, reportType, reportName) {
     
     var arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData;
 
