@@ -205,6 +205,135 @@ public class BundleConfig
     }
 	
 
+
+
+function ExportCSV(JSONData, ReportTitle, ShowLabel, reportType, reportName) {
+    
+    var arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData;
+
+    angular.forEach(arrData, function (data, index) {
+        if (data.date != undefined)
+            data.date = dateFormat(data.date)
+    });
+
+    var CSV = '';        
+    CSV += ReportTitle + '\r\n\n';
+    
+    if (ShowLabel) {
+
+        var row = "";        
+        for (var index in arrData[0]) {
+            row += index + ';';
+        }
+
+        row = row.slice(0, -1);        
+        CSV += row + '\r\n';
+    }
+    
+    for (var i = 0; i < arrData.length; i++) {
+
+        var row = "";        
+        for (var index in arrData[i]) {
+            row += '"' + arrData[i][index] + '";';
+        }
+
+        row = row.split('.').join(",");
+        row.slice(0, row.length - 1);        
+        CSV += row + '\r\n';
+    }
+
+    if (CSV == '') {
+        alert("Invalid data");
+        return;
+    }
+    
+    var fileName = "";    
+    fileName += reportName.replace(/ /g, "_");
+    
+    var uri = 'data:text/csv; charset=utf-8,' + escape(CSV);
+
+    var link = document.createElement("a");
+    link.href = uri;
+    
+    link.style = "visibility:hidden";
+    link.download = fileName + ".csv";
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+};
+
+}]);	
+
+
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<div ng-app="appTest">
+    
+    <div ng-controller="CustomController">
+        <input type="text" ng-model="nome" />
+
+        <h2>Nome: {{nome}}</h2>
+        <select ng-model="aluno" id="cboAlunos" name="cboAlunos"
+                ng-options="lista.NomeAluno for lista in listaAlunos" ng-change="GetCursosNotIn()">
+            <option value="">Selecione...</option>
+        </select>
+
+        <br />
+        <br />
+        <br />
+
+        @*ng-src="{{listaCursos}}"*@
+
+        <select ng-model="cursos" id="cboCursos" name="cboCursos"
+                ng-change="GetCursosAluno()" ng-options="curso.NomeCurso for curso in listaCursos">
+            <option value="">Selecione...</option>
+        </select>
+
+        <button id="btnAdd" ng-click="addCourse()" ng-disabled="!listaCursos">Add Course</button>
+
+        <br />
+        <br />
+        <br />
+
+        <table st-table="rowTableCollection" st-safe-src="tableDataAlunos" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>curso</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="row in rowTableCollection">
+                    <td>{{row.NomeCurso}}</td>
+                    <td>
+                        <button type="button" ng-click="RemoveItem(row)" class="btn btn-sm btn-danger">
+                            excluir
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        @*<ul>
+            <li ng-repeat="country in ListaFlags">
+                <img id="preview" src="http://beta.teacherhorizons.com/static/prototypes/design/registration/static/images/flags/{{country.name.toLowerCase()}}.png" />
+                <span>{{country.name}}</span>
+            </li>
+        </ul>
+
+        {{ListaFlags}}*@
+
+    </div>
+</div>
+
+@section scripts {
+    @Scripts.Render("~/App/CustomController.js")
+    
+}
+
 appTest.controller('CustomController', ['$scope','$http', function ($scope, $http) {
 
     $scope.nome = "TESTE";
@@ -513,130 +642,3 @@ appTest.controller('CustomController', ['$scope','$http', function ($scope, $htt
     //    { firstName: 'Blandine', lastName: 'Faivre', birthDate: new Date('1987-04-25'), balance: -2323.22, email: 'oufblandou@gmail.com' },
     //    { firstName: 'Francoise', lastName: 'Frere', birthDate: new Date('1955-08-27'), balance: 42343, email: 'raymondef@gmail.com' }
     //];
-
-function ExportCSV(JSONData, ReportTitle, ShowLabel, reportType, reportName) {
-    
-    var arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData;
-
-    angular.forEach(arrData, function (data, index) {
-        if (data.date != undefined)
-            data.date = dateFormat(data.date)
-    });
-
-    var CSV = '';        
-    CSV += ReportTitle + '\r\n\n';
-    
-    if (ShowLabel) {
-
-        var row = "";        
-        for (var index in arrData[0]) {
-            row += index + ';';
-        }
-
-        row = row.slice(0, -1);        
-        CSV += row + '\r\n';
-    }
-    
-    for (var i = 0; i < arrData.length; i++) {
-
-        var row = "";        
-        for (var index in arrData[i]) {
-            row += '"' + arrData[i][index] + '";';
-        }
-
-        row = row.split('.').join(",");
-        row.slice(0, row.length - 1);        
-        CSV += row + '\r\n';
-    }
-
-    if (CSV == '') {
-        alert("Invalid data");
-        return;
-    }
-    
-    var fileName = "";    
-    fileName += reportName.replace(/ /g, "_");
-    
-    var uri = 'data:text/csv; charset=utf-8,' + escape(CSV);
-
-    var link = document.createElement("a");
-    link.href = uri;
-    
-    link.style = "visibility:hidden";
-    link.download = fileName + ".csv";
-    
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-};
-
-}]);	
-
-
-
-@{
-    ViewBag.Title = "Index";
-}
-
-<div ng-app="appTest">
-    
-    <div ng-controller="CustomController">
-        <input type="text" ng-model="nome" />
-
-        <h2>Nome: {{nome}}</h2>
-        <select ng-model="aluno" id="cboAlunos" name="cboAlunos"
-                ng-options="lista.NomeAluno for lista in listaAlunos" ng-change="GetCursosNotIn()">
-            <option value="">Selecione...</option>
-        </select>
-
-        <br />
-        <br />
-        <br />
-
-        @*ng-src="{{listaCursos}}"*@
-
-        <select ng-model="cursos" id="cboCursos" name="cboCursos"
-                ng-change="GetCursosAluno()" ng-options="curso.NomeCurso for curso in listaCursos">
-            <option value="">Selecione...</option>
-        </select>
-
-        <button id="btnAdd" ng-click="addCourse()" ng-disabled="!listaCursos">Add Course</button>
-
-        <br />
-        <br />
-        <br />
-
-        <table st-table="rowTableCollection" st-safe-src="tableDataAlunos" class="table table-striped">
-            <thead>
-                <tr>
-                    <th>curso</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="row in rowTableCollection">
-                    <td>{{row.NomeCurso}}</td>
-                    <td>
-                        <button type="button" ng-click="RemoveItem(row)" class="btn btn-sm btn-danger">
-                            excluir
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
-        @*<ul>
-            <li ng-repeat="country in ListaFlags">
-                <img id="preview" src="http://beta.teacherhorizons.com/static/prototypes/design/registration/static/images/flags/{{country.name.toLowerCase()}}.png" />
-                <span>{{country.name}}</span>
-            </li>
-        </ul>
-
-        {{ListaFlags}}*@
-
-    </div>
-</div>
-
-@section scripts {
-    @Scripts.Render("~/App/CustomController.js")
-    
-}
