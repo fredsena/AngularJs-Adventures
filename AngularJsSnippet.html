@@ -643,11 +643,9 @@ appTest.controller('CustomController', ['$scope','$http', function ($scope, $htt
     //    { firstName: 'Francoise', lastName: 'Frere', birthDate: new Date('1955-08-27'), balance: 42343, email: 'raymondef@gmail.com' }
     //];
     
-    
 
 <div ng-controller="PersistController">
 
-    <hr />
     <label>Vínculo:</label>
     <select ng-model="vinculoLista.id" name="cboVinculo" id="cboVinculo" class="form-control input-m-sm"
             ng-options="lista.value for lista in vinculo" ng-change="CheckVisible();">
@@ -683,7 +681,7 @@ appTest.controller('CustomController', ['$scope','$http', function ($scope, $htt
                     <div class="row">
                         <div class="col-md-4">
                             <label class="required">CPF:</label>
-                            <input id="" class="form-control input">
+                            <input class="form-control input cpf">
                         </div>
                         <div class="col-md-4">
                             <label>Nº PIS/PASEP:</label>
@@ -702,9 +700,9 @@ appTest.controller('CustomController', ['$scope','$http', function ($scope, $htt
                     <input class="form-control input">
 
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <label>Estado Civil:</label>
-                            <select name="cboEstadoCivil" id="cboEstadoCivil" class="form-control input-m-sm" required="" data-parsley-id="2600">
+                            <select name="cboEstadoCivil" id="cboEstadoCivil" class="form-control input">
                                 <option value="">Selecione uma Opção</option>
                                 <option value="1">Brasília</option>
                                 <option value="2">Rio de Janeiro</option>
@@ -713,7 +711,7 @@ appTest.controller('CustomController', ['$scope','$http', function ($scope, $htt
                             </select>
                         </div>
 
-                        <div class="col-md-8">
+                        <div class="col-md-6">
                             <label>Cônjuge:</label>
                             <input id="" class="form-control input">
                         </div>
@@ -728,28 +726,29 @@ appTest.controller('CustomController', ['$scope','$http', function ($scope, $htt
                         </div>
                         <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"></div>
                         <div>
-                            <span class="btn btn-default btn-file"><span class="fileinput-new">Selecionar imagem</span><span class="fileinput-exists"></span><input type="file" name="..."></span>
+                            <span class="btn btn-default btn-file">
+                                <span class="fileinput-new">Selecionar imagem</span>
+                                <span class="fileinput-exists"></span><input type="file" name="...">
+                            </span>
                             <a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remover</a>
                         </div>
+
                     </div>
 
-                    <hr />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>Data de Aniversário:</label>
+                            <input type="text" name="periodo" value="12/05/2014" id="periodo" class="form-control form-datepicker date" data-date-format="dd/mm/yyyy" data-language="pt-BR" placeholder="" data-parsley-errors-container="#periodo-errors1" required>
 
-                    <div class="input-s-md inline">
-                        <div class="input-group">
-                            <input type="text" name="periodo" value="12/05/2014" id="periodo" class="form-control form-datepicker date" data-date-format="dd/mm/yyyy" data-language="pt-BR" placeholder="__/__/____" data-parsley-errors-container="#periodo-errors1" required="" data-parsley-id="8154" maxlength="10" autocomplete="off">
-                            <span class="input-group-addon">
-                                <i class="fa fa-calendar"></i>
-                            </span>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox">
+                                    Divulgar Aniversário
+                                </label>
+                            </div>
+
                         </div>
-                        <div id="periodo-errors1"><ul class="parsley-errors-list" id="parsley-id-8154"></ul></div>
-                    </div>
 
-                    <div class="checkbox">
-                        <label>
-                            <input type="checkbox">
-                            Divulgar Aniversário
-                        </label>
                     </div>
                 </div>
 
@@ -757,31 +756,31 @@ appTest.controller('CustomController', ['$scope','$http', function ($scope, $htt
                     <div class="col-md-12">
                         <div class="col-sm-3">
                             <label>Nacionalidade:</label>
-                            <select class="form-control input-m-sm">
+                            <select class="form-control input">
                                 <option value="1">Brasil</option>
                                 <option value="2">Argentina</option>
                                 <option value="3">Colômbia</option>
                             </select>
                         </div>
 
-                        <div class="col-sm-4">
+                        <div class="col-sm-5">
                             <label>Naturalidade:</label>
                             <input id="" class="form-control input">
                         </div>
 
                         <div class="col-sm-2">
                             <label>UF Nascimento:</label>
-                            <select class="form-control input-m-sm">
+                            <select class="form-control input">
                                 <option value="1">CE</option>
                                 <option value="2">SP</option>
                                 <option value="3">DF</option>
                             </select>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-2">
                             <label class="required">Sexo:</label>
-                            <select class="form-control input-m-sm">
+                            <select class="form-control input">
                                 <option value="1">MASCULINO</option>
-                                <option value="2">FEMININO</option>                                
+                                <option value="2">FEMININO</option>
                             </select>
                         </div>
                     </div>
@@ -827,13 +826,99 @@ appTest.controller('CustomController', ['$scope','$http', function ($scope, $htt
                 <div class="col-md-12">
                     <uib-accordion>
                         <uib-accordion-group heading="Características Físicas">
-                            This content is straight in the template.
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label>Tipagem ABO:</label>
+                                    <select class="form-control input">
+                                        <option value="">Selecione</option>
+                                        <option value="1">A+</option>
+                                        <option value="2">O-</option>
+                                        <option value="3">AB+</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <label>Fator RH:</label>
+                                    <select class="form-control input">
+                                        <option value="">Selecione</option>
+                                        <option value="1">Fator 1</option>
+                                        <option value="2">Fator 2</option>
+                                        <option value="3">Fator 3</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label>Cor:</label>
+                                    <select class="form-control input">
+                                        <option value="">Selecione</option>
+                                        <option value="1">Branco</option>
+                                        <option value="2">Negro</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <hr />
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="col-sm-6">
+                                        <label class="control-label-m-sm">Portador de Necessidade Especial (PNE)</label>
+                                        <label class="switch">
+                                            <input type="checkbox" name="lotacao[especial]" value="1">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label>Especifique:</label>
+                                        <input class="form-control input">
+                                    </div>
+                                </div>
+                            </div>
+
                         </uib-accordion-group>
                     </uib-accordion>
 
                     <uib-accordion>
                         <uib-accordion-group heading="Contatos">
-                            This content is straight in the template.
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label>Forma de Contato:</label>
+                                    <select class="form-control input">
+                                        <option value="">Telefone</option>
+                                        <option value="1">Email</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <label>Tipo de Contato:</label>
+                                    <select class="form-control input">                                        
+                                        <option value="1">Celular Particular</option>
+                                        <option value="2">Telefone Fixo</option>                                        
+                                    </select>
+                                </div>
+                                <div class="col-sm-1">
+                                    <label>DDD:</label>
+                                    <input class="form-control input">
+                                </div>
+                                <div class="col-sm-3">
+                                    <label>Telefone:</label>
+                                    <input class="form-control input">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="col-sm-8"> 
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label-m-sm">Disponibilização autorizada?</label>
+                                        <label class="switch">
+                                            <input type="checkbox" name="lotacao[especial]" value="1">
+                                            <span></span>
+                                        </label>                                       
+                                    </div>
+                                </div>
+                            </div>
+
                         </uib-accordion-group>
                     </uib-accordion>
 
@@ -932,12 +1017,10 @@ appTest.controller('CustomController', ['$scope','$http', function ($scope, $htt
                     isFirstOpen: true,
                     isFirstDisabled: false
                 };
-
             }]);
 
 
             $(document).ready(function () {
-
                 $('.continue').click(function () {
                     console.debug("clicou", "true");
 
@@ -947,9 +1030,7 @@ appTest.controller('CustomController', ['$scope','$http', function ($scope, $htt
                 $('.back').click(function () {
                     $('.nav-tabs > .active').prev('li').find('a').trigger('click');
                 });
-
             });
-
         </script>
     }
 
