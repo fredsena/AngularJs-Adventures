@@ -642,3 +642,314 @@ appTest.controller('CustomController', ['$scope','$http', function ($scope, $htt
     //    { firstName: 'Blandine', lastName: 'Faivre', birthDate: new Date('1987-04-25'), balance: -2323.22, email: 'oufblandou@gmail.com' },
     //    { firstName: 'Francoise', lastName: 'Frere', birthDate: new Date('1955-08-27'), balance: 42343, email: 'raymondef@gmail.com' }
     //];
+    
+    
+
+<div ng-controller="PersistController">
+
+    <hr />
+    <label>Vínculo:</label>
+    <select ng-model="vinculoLista.id" name="cboVinculo" id="cboVinculo" class="form-control input-m-sm"
+            ng-options="lista.value for lista in vinculo" ng-change="CheckVisible();">
+        <option value="">Selecione...</option>
+    </select>
+
+    <hr />
+
+    <div ng-show="mostraTabs">
+
+        <div class="navbar">
+            <div class="navbar-inner">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#step1" data-toggle="tab" data-step="1">Dados Pessoais</a></li>
+                    <li><a href="#step2" data-toggle="tab" data-step="2">Dados Funcionais</a></li>
+                    <li><a href="#step3" data-toggle="tab" data-step="3">Formação Acadêmica</a></li>
+                </ul>
+            </div>
+        </div>
+
+
+        <div class="tab-content">
+            <div class="tab-pane fade in active" id="step1">
+
+                <div class="col-md-8">
+
+                    <label class="required">Nome:</label>
+                    <input id="" class="form-control input">
+
+                    <label>Nome Social:</label>
+                    <input id="" class="form-control input">
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="required">CPF:</label>
+                            <input id="" class="form-control input">
+                        </div>
+                        <div class="col-md-4">
+                            <label>Nº PIS/PASEP:</label>
+                            <input id="" class="form-control input">
+                        </div>
+                        <div class="col-md-4">
+                            <label>Matrícula SIAPE:</label>
+                            <input id="" class="form-control input">
+                        </div>
+                    </div>
+
+                    <label>Mãe:</label>
+                    <input class="form-control input">
+
+                    <label>Pai:</label>
+                    <input class="form-control input">
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label>Estado Civil:</label>
+                            <select name="cboEstadoCivil" id="cboEstadoCivil" class="form-control input-m-sm" required="" data-parsley-id="2600">
+                                <option value="">Selecione uma Opção</option>
+                                <option value="1">Brasília</option>
+                                <option value="2">Rio de Janeiro</option>
+                                <option value="3">Belo Horizonte</option>
+                                <option value="4">Rio Preto</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-8">
+                            <label>Cônjuge:</label>
+                            <input id="" class="form-control input">
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="fileinput fileinput-new" data-provides="fileinput">
+                        <div class="fileinput-new thumbnail" style="width: 200px; height: 150px;">
+                            <img data-src="holder.js/100%x100%" alt="...">
+                        </div>
+                        <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"></div>
+                        <div>
+                            <span class="btn btn-default btn-file"><span class="fileinput-new">Selecionar imagem</span><span class="fileinput-exists"></span><input type="file" name="..."></span>
+                            <a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remover</a>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="input-s-md inline">
+                        <div class="input-group">
+                            <input type="text" name="periodo" value="12/05/2014" id="periodo" class="form-control form-datepicker date" data-date-format="dd/mm/yyyy" data-language="pt-BR" placeholder="__/__/____" data-parsley-errors-container="#periodo-errors1" required="" data-parsley-id="8154" maxlength="10" autocomplete="off">
+                            <span class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </span>
+                        </div>
+                        <div id="periodo-errors1"><ul class="parsley-errors-list" id="parsley-id-8154"></ul></div>
+                    </div>
+
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox">
+                            Divulgar Aniversário
+                        </label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-sm-3">
+                            <label>Nacionalidade:</label>
+                            <select class="form-control input-m-sm">
+                                <option value="1">Brasil</option>
+                                <option value="2">Argentina</option>
+                                <option value="3">Colômbia</option>
+                            </select>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <label>Naturalidade:</label>
+                            <input id="" class="form-control input">
+                        </div>
+
+                        <div class="col-sm-2">
+                            <label>UF Nascimento:</label>
+                            <select class="form-control input-m-sm">
+                                <option value="1">CE</option>
+                                <option value="2">SP</option>
+                                <option value="3">DF</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-3">
+                            <label class="required">Sexo:</label>
+                            <select class="form-control input-m-sm">
+                                <option value="1">MASCULINO</option>
+                                <option value="2">FEMININO</option>                                
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-sm-6">
+                            <label>Endereço:</label>
+                            <input id="" class="form-control input">
+                        </div>
+
+                        <div class="col-sm-6">
+                            <label>Bairro:</label>
+                            <input id="" class="form-control input">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-8">
+                            <label>Cidade:</label>
+                            <input class="form-control input">
+                        </div>
+                        <div class="col-md-2">
+                            <label>UF:</label>
+                            <select class="form-control input-m-sm">
+                                <option value="1">CE</option>
+                                <option value="2">SP</option>
+                                <option value="3">DF</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label>CEP:</label>
+                            <input class="form-control input">
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="col-md-12">
+                    <uib-accordion>
+                        <uib-accordion-group heading="Características Físicas">
+                            This content is straight in the template.
+                        </uib-accordion-group>
+                    </uib-accordion>
+
+                    <uib-accordion>
+                        <uib-accordion-group heading="Contatos">
+                            This content is straight in the template.
+                        </uib-accordion-group>
+                    </uib-accordion>
+
+                    <uib-accordion>
+                        <uib-accordion-group heading="Documentos">
+                            This content is straight in the template.
+                        </uib-accordion-group>
+                    </uib-accordion>
+
+                    <a class="btn btn-default btn next" href="" data-ng-click="goNext(1)">Próximo</a>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="step2">
+                <div class="well">
+
+                    <label>Security Question 2</label>
+                    <select class="form-control input">
+                        <option value="What was the name of your first pet?">What was the name of your first pet?</option>
+                        <option selected="" value="Where did you first attend school?">Where did you first attend school?</option>
+                        <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+                        <option value="What is your favorite car model?">What is your favorite car model?</option>
+                    </select>
+                    <br>
+                    <label>Enter Response</label>
+                    <input class="form-control input">
+
+                </div>
+                <a class="btn btn-default btn next" href="" data-ng-click="goNext(0)">Anterior</a>
+                <a class="btn btn-default btn next" href="" data-ng-click="goNext(2)">Próximo</a>
+            </div>
+            <div class="tab-pane fade" id="step3">
+                <div class="well"> <h2>Step 3</h2> Add another step here..</div>
+                <a class="btn btn-default btn next" href="" data-ng-click="goNext(1)">Anterior</a>
+            </div>
+
+            <hr />
+
+            <div id="push"></div>
+
+        </div>
+    </div>
+
+    @section scripts {
+
+        <script type="text/javascript">
+
+            appAngular.controller('PersistController', ['$scope', '$http', function ($scope, $http) {
+
+                $scope.mostraTabs = false;
+
+                $scope.vinculo = [
+                    { id: '1', value: 'Servidor' },
+                    { id: '2', value: 'Terceirizado' },
+                    { id: '3', value: 'Estagiário' }
+                ];
+
+                $scope.CheckVisible = function () {
+
+                    //console.debug("$scope.vinculoLista.id", $scope.vinculoLista.id);
+
+                    if ($scope.vinculoLista.id != null)
+                        $scope.mostraTabs = true;
+                    else
+                        $scope.mostraTabs = false;
+                };
+
+
+                $scope.goNext = function (i) {
+                    $('[href=#step' + (i + 1) + ']').tab('show');
+                    return false;
+                }
+
+
+                $scope.oneAtATime = true;
+
+                $scope.groups = [
+                  {
+                      title: 'Dynamic Group Header - 1',
+                      content: 'Dynamic Group Body - 1'
+                  },
+                  {
+                      title: 'Dynamic Group Header - 2',
+                      content: 'Dynamic Group Body - 2'
+                  }
+                ];
+
+                $scope.items = ['Item 1', 'Item 2', 'Item 3'];
+
+                $scope.addItem = function () {
+                    var newItemNo = $scope.items.length + 1;
+                    $scope.items.push('Item ' + newItemNo);
+                };
+
+                $scope.status = {
+                    isFirstOpen: true,
+                    isFirstDisabled: false
+                };
+
+            }]);
+
+
+            $(document).ready(function () {
+
+                $('.continue').click(function () {
+                    console.debug("clicou", "true");
+
+                    $('.nav-tabs > .active').next('li').find('a').trigger('click');
+                });
+
+                $('.back').click(function () {
+                    $('.nav-tabs > .active').prev('li').find('a').trigger('click');
+                });
+
+            });
+
+        </script>
+    }
+
