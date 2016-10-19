@@ -1,0 +1,830 @@
+/* Index VIEW */
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="@Url.Content("~/Angular/Servico/FeatureServico.js")"></script>
+<script src="@Url.Content("~/Angular/Controlador/BaseController.js")"></script>
+<script src="@Url.Content("~/Angular/Controlador/FeatureController.js")"></script>
+<script src="@Url.Content("~/Angular/Diretivas/dirPagination.js")"></script>
+<div ng-app="AppAngular" ng-controller="FeatureController">
+    <div class="row">
+        <div class="col-lg-12 tabbable">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="box">
+                        <form role="form">
+                            <div class="box-body">
+                                <div class="row">
+                                    <div class="form-group col-xs-12 col-md-3">
+                                        <label for="nome_con">@Labels.Feature_Produto</label>
+                                        <input id="nome_con_form" type="text" class="form-control" ng-model="pesquisa.ProdutoID"
+                                               data-inputmask="'mask': '999', 'placeholder': ''" string-to-number />
+                                    </div>
+                                    <div class="form-group col-xs-12 col-md-3">
+                                        <label for="nome_con_form">@Labels.Feature_NumeroCod</label>
+                                        <input id="nome_con" type="text" class="form-control upper" placeholder="" ng-model="pesquisa.Cod"
+                                               maxlength="20" ng-maxlength="20" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-12 col-md-5">
+                                        <label for="nome_con">@Labels.Feature_ParametroX</label>
+                                        <input id="nome_con" type="text" class="form-control upper" placeholder="" ng-model="pesquisa.ParametroX"
+                                               maxlength="40" ng-maxlength="40" />
+                                    </div>
+                                    <div class="form-group col-xs-12 col-md-2">
+                                        <label for="">@Labels.Comum_Situacao</label>
+                                        <select class="form-control" ng-model="pesquisa.Situacao" name="SituacaoID">
+                                            <option value="A">@Labels.Comum_Ativo</option>
+                                            <option value="I">@Labels.Comum_Inativo</option>
+                                            <option value="T">@Labels.Comum_Todos</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group button-no-label col-xs-12 col-md-4 pull-right">
+                                        <a ng-click="abrirTelaInclusao('false', 'ProdutoID'); limparCampos()" class="btn btn-success pull-right margin-left-10" data-toggle="modal" data-target="#add" title="@Labels.Selecione_Para_Incluir_Novo_Item"><i class="fa fa-fw fa-plus"></i>@Labels.Comum_Incluir</a>
+                                        <a ng-click="pesquisar()" class="btn btn-primary pull-right " title="@Labels.Selecione_Para_Buscar"><i class="fa fa-fw fa-search"></i>@Labels.Comum_Buscar</a>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3 pull-right">
+                                        <a data-toggle="modal" data-target="#confirmexport" ng-click="exibirTabelaExportacao()">
+                                            <i class="fa fa-fw fa-file-text-o pull-right margin pointer" title="Exportar"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="table-responsive" ng-show="lista.length > 0">
+                                    <div class="table-responsive col-xs-12 no-padding">
+                                        <table class="table table-striped table-hover table-condensed">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center pointer" ng-click="ordenarPor('Cod')">@Labels.Feature_Produto</th>
+                                                    <th class="text-center pointer" ng-click="ordenarPor('ProdutoID')">@Labels.Feature_NumeroCod</th>
+                                                    <th class="text-center pointer" ng-click="ordenarPor('ParametroX')">@Labels.Feature_ParametroX</th>
+                                                    <th class="text-center pointer" ng-click="ordenarPor('SituacaoID')">@Labels.Comum_Situacao</th>
+                                                    <th class="text-center">@Labels.Comum_Acao</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr dir-paginate="itemLista in lista | orderBy:criterioDeOrdenacao:direcaoDaOrdenacao | itemsPerPage: pageSize">
+                                                    <td class="text-center">{{ itemLista.ProdutoID }}</td>
+                                                    <td class="text-center">{{ itemLista.Cod }}</td>
+                                                    <td class="text-center">{{ itemLista.ParametroX }}</td>
+                                                    <td class="text-center">
+                                                        <span class="label {{itemLista.SituacaoID ? 'label-success' : 'label-warning'}}">
+                                                            {{itemLista.SituacaoID ? 'Ativo' : 'Inativo'}}
+                                                        </span>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <a ng-click="abrirTelaEdicao(itemLista)" href="#">
+                                                            <i data-toggle="modal" title="Editar" data-target="#edit" class="fa pointer fa-fw fa-edit"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div ng-show="lista.length == 0" class="text-center">
+                                    <label>@Labels.Comum_RegistrosNaoEncontrados</label>
+                                </div>
+                            </div>
+                            <div class="box-footer">
+                                <div class="clearfix">
+                                    <dir-pagination-controls boundary-links="true" on-page-change="pageChangeHandler(newPageNumber)" template-url="~/Angular/Paginacao/PaginacaoLayout.tpl.html"></dir-pagination-controls>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="confirmexport" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="$('.modal').modal('hide');"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">@Labels.Comum_ConfirmarAcao </h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" ng-click="exportarDados('excel')" class=" btn btn-success" data-toggle="modal" data-target="#successexport">@Labels.Comum_Sim</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">@Labels.Comum_Nao</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="successexport" tabindex="-2" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="$('.modal').modal('hide');"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">@Labels.Comum_OperacaoSucesso </h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="$('.modal').modal('hide');" class="btn btn-success">@Labels.Comum_Sair</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="table table-striped table-hover table-condensed exportarTabela" style="display:none">
+        <thead>
+            <tr>
+                <th class="text-center">@Labels.Feature_Produto</th>
+                <th class="text-center">@Labels.Feature_NumeroCod</th>
+                <th class="text-center">@Labels.Feature_ParametroX</th>
+                <th class="text-center">@Labels.Comum_Situacao</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="itemLista in lista">
+                <td class="text-center">{{ itemLista.Cod }}</td>
+                <td class="text-center">{{ itemLista.ProdutoID }}</td>
+                <td class="text-center">{{ itemLista.ParametroX }}</td>
+                <td class="text-center">
+                    <span class="label {{itemLista.SituacaoID ? 'label-success' : 'label-warning'}}">
+                        {{itemLista.SituacaoID ? 'Ativo' : 'Inativo'}}
+                    </span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    @Html.Partial("Adicionar")
+    @Html.Partial("Editar")
+    <tratamento-erro></tratamento-erro>
+    <carregando />
+</div>
+
+/* Index EDITAR */
+
+<form name="edicao" novalidate ng-submit="editar()">
+    <div class="modal fade" id="edit" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">@Labels.Comum_Editar</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="form-group col-xs-2 col-md-4" ng-class="{'has-error': edicao.ProdutoID.$invalid && edicao.ProdutoID.$touched}">
+                            <label for="nome_con">@Labels.Feature_Produto</label>
+                            <input name="ProdutoID" type="text" class="form-control" ng-model="item.ProdutoID"
+                                   data-inputmask="'mask': '999', 'placeholder': ''" string-to-number disabled="disabled" />
+                            <validar-formulario campo="edicao.ProdutoID" mensagens="mensagensErro" />
+                        </div>
+                        <div class="form-group col-xs-12 col-md-5" ng-class="{'has-error': edicao.Cod.$invalid && edicao.Cod.$touched}">
+                            <label for="nome_con_form">*@Labels.Feature_NumeroCod</label>
+                            <input name="Cod" type="text" class="form-control upper" placeholder="" ng-model="item.Cod"
+                                   maxlength="20" ng-maxlength="20" ng-minlength="15" ng-required="true" />
+                            <validar-formulario campo="edicao.Cod" mensagens="mensagensErro" />
+                        </div>
+                    </div>
+                    <div class="row margin-bottom">
+                        <div class="form-group col-xs-12 col-md-9" ng-class="{'has-error': edicao.ParametroX.$invalid && edicao.ParametroX.$touched}">
+                            <label for="nome_con">*@Labels.Feature_ParametroX</label>
+                            <input name="ParametroX" type="text" class="form-control upper" placeholder="" ng-model="item.ParametroX"
+                                   maxlength="40" ng-maxlength="40" ng-required="true" ng-minlength="2" />
+                            <validar-formulario campo="edicao.ParametroX" mensagens="mensagensErro" />
+                        </div>
+                        <div class="checkbox checkbox-no-label  col-xs-12 col-md-3">
+                            <label title="@Labels.Selecione_p_Incluir_Ativo">
+                                <input checked type="checkbox" name="SituacaoID" ng-model="item.SituacaoID" title="@Labels.Selecione_p_Incluir_Ativo"> @Labels.Comum_Ativo
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" data-toggle="modal"
+                            ng-click="abrirConfirmacao(true, 'confirmedit')"
+                            title="@Labels.Selecione_p_Salvar_Operacao">
+                        @Labels.Comum_Salvar
+                        </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="confirmedit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">@Labels.Comum_ConfirmarAcao</h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" ng-click="executar('false')" class="btn btn-success">@Labels.Comum_Sim</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="$('.modal').modal('hide');">@Labels.Comum_Nao</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="successedit" tabindex="-2" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="$('.modal').modal('hide');"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">@Labels.Comum_OperacaoSucesso </h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="$('.modal').modal('hide');" class="btn btn-success">@Labels.Comum_Sair</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+/* Index ADICIONAR */
+
+<form name="inclusao" novalidate ng-submit="adicionar()">
+    <div class="modal fade" id="add" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">@Labels.Comum_Incluir</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="form-group col-xs-2 col-md-4" ng-class="{'has-error': inclusao.ProdutoID.$invalid && inclusao.ProdutoID.$touched}">
+                            <label for="nome_con">*@Labels.Feature_Produto</label>
+                            <input name="ProdutoID" type="text" class="form-control" ng-model="item.ProdutoID"
+                                   data-inputmask="'mask': '999', 'placeholder': ''" string-to-number
+                                   ng-required="true" ng-maxlength="5" ng-minlength="1" />
+                            <validar-formulario campo="inclusao.ProdutoID" mensagens="mensagensErro" />
+                        </div>
+                        <div class="form-group col-xs-12 col-md-5" ng-class="{'has-error': inclusao.Cod.$invalid && inclusao.Cod.$touched}">
+                            <label for="nome_con_form">*@Labels.Feature_NumeroCod</label>
+                            <input name="Cod" type="text" class="form-control upper" placeholder="" ng-model="item.Cod"
+                                   maxlength="20" ng-maxlength="20" ng-minlength="15" ng-required="true"/>
+                            <validar-formulario campo="inclusao.Cod" mensagens="mensagensErro" />
+                        </div>
+                    </div>
+                    <div class="row margin-bottom">
+                        <div class="form-group col-xs-12 col-md-8" ng-class="{'has-error': inclusao.ParametroX.$invalid && inclusao.ParametroX.$touched}">
+                            <label for="nome_con">*@Labels.Feature_ParametroX</label>
+                            <input name="ParametroX" type="text" class="form-control upper" placeholder="" ng-model="item.ParametroX"
+                                   maxlength="40" ng-maxlength="40" ng-minlength="3" ng-required="true" />
+                            <validar-formulario campo="inclusao.ParametroX" mensagens="mensagensErro" />
+                        </div>
+                        <div class="checkbox checkbox-no-label  col-xs-12 col-md-4">
+                            <label title="@Labels.Selecione_p_Incluir_Ativo">
+                                <input checked type="checkbox" name="SituacaoID" ng-model="item.SituacaoID" title="@Labels.Selecione_p_Incluir_Ativo"> @Labels.Comum_Ativo
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" data-toggle="modal"
+                            ng-click="abrirConfirmacao(false, 'confirmadd')"
+                            title="@Labels.Selecione_p_Salvar_Operacao">
+                        @Labels.Comum_Salvar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="confirmadd" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">@Labels.Comum_ConfirmarAcao </h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" ng-click="executar('true')" class="btn btn-success">@Labels.Comum_Sim</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="$('.modal').modal('hide');">@Labels.Comum_Nao</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="successadd" tabindex="-2" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">@Labels.Comum_OperacaoSucesso </h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="$('.modal').modal('hide');" class="btn btn-success">@Labels.Comum_Sair</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+/* BaseController.js */
+
+(function () {
+    'use strict';
+
+    // Criando o controlador
+    angular
+        .module('AppAngular')
+        .controller('BaseController', BaseController);
+
+    // Adicionando os modulos que irão ser utilizados no controlador
+    BaseController.$inject = ['$scope', '$http', '$rootScope', '$timeout', '$q', 'Servico', 'MensagensServico'];
+
+    // Controlador
+    function BaseController($scope, $http, $rootScope, $timeout, $q, Servico, MensagensServico) {
+        
+        // Titulo do controlador
+        $scope.title = 'BaseController';
+
+        // Lista de itens da tela
+        $scope.lista = [];
+
+        // Item default
+        $scope.item = {};
+
+        // Controle de paginação
+        $scope.currentPage = 1;
+        $scope.pageSize = 14;
+        
+        // Lista de mensagens de erro para validação
+        $scope.mensagensErro = [];
+
+        // Data de alteração / inclusão do registro
+        $scope.etag = null;
+
+        // Evento disparado no carragamento da tela principal
+        $scope.carregarTela = function () {
+
+            // Cria uma lista de carregamento
+            var listaCarregamento = [];
+
+            // Adiciona a chamada assíncrona na lista
+            listaCarregamento.push(Servico.Selecionar($scope.pesquisa));
+            listaCarregamento.push(MensagensServico.Selecionar());
+
+            // Pede pra executar todas as listas
+            $q.all(listaCarregamento).then(function (data) {
+
+                // Se existir dois retornos
+                if (data && data.length == 2) {
+
+                    // Define o primeiro retorno da lista principal
+                    $scope.lista = data[0];
+
+                    // Define o segundo retorno da lista de mensagens
+                    $scope.mensagensErro = data[1];
+					
+                }
+
+            });
+
+        }
+
+        // Evento do botão de fechar modal
+        function fecharModal() {
+            $('.modal').not('.modal-success-AppAngular').modal('hide');
+        }
+
+        // Evento do botão Incluir da tela principal
+        $scope.abrirTelaInclusao = function (iniciarId, campoId) {
+            
+            // Limpando o estado do modelo
+            $scope.item = $scope.retornarItemDefault();            
+
+            // Limpando o estado do formulario
+            $scope.inclusao.$setPristine();
+            $scope.inclusao.$setUntouched();
+
+            // Limpa a etag
+            $scope.etag = null;
+
+            // Define foco no campo
+            $("form[name='inclusao'] input:first").focus();
+        }
+
+        // Evento do botão Editar da tela principal
+        $scope.abrirTelaEdicao = function (objeto) {
+            
+            // Define a etag com a data da ultima atualizacao
+            $scope.etag = objeto.DataUltimaAlteracao;
+
+            // Copia o objeto
+            $scope.item = angular.copy(objeto);
+
+            // Verifica se existe algum campo invalido
+            $rootScope.validarFormulario($scope.edicao);
+
+        }
+
+        // Evento do botão Salvar da tela de inclusão
+        $scope.adicionar = function () {
+
+            // Exibe a pop-up
+            $("#confirmadd").modal("hide");
+            
+            Servico.Inserir($scope.item).then(function () {
+
+                // Exibe a pop-up
+                $("#successadd").modal("show");
+
+                // Carrega a tela novamente
+                $scope.pesquisar();
+
+                // Fecha a modal
+                fecharModal();
+
+            });
+        }
+
+        // Evento do botão Buscar da tela principal
+        $scope.pesquisar = function () {
+
+            var deferred = $q.defer();
+
+            if ($scope.pesquisa.EnviarDadosCombo){
+                $scope.pesquisa.EnviarDados = ($scope.pesquisa.EnviarDadosCombo == 'S' ? true : $scope.pesquisa.EnviarDadosCombo == 'N' ? false : null);
+            }
+
+            $scope.pesquisa.SituacaoID = ($scope.pesquisa.Situacao == 'A' ? true : $scope.pesquisa.Situacao == 'I' ? false : null);
+            Servico.Selecionar($scope.pesquisa).then(function (data) {
+
+                // Preenche a lista
+                $scope.lista = data;
+
+                // Verifica as permissões de campo na tela
+                $timeout($rootScope.bloquearCamposTela, 50);
+
+                // Resolve o método
+                deferred.resolve(data);
+            });
+
+            // Entrega uma promessa de resolução do método
+            return deferred.promise;
+        }
+
+        // Evento do botão Salvar da tela de edição
+        $scope.editar = function () {
+
+            // Exibe a pop-up
+            $("#confirmedit").modal("hide");
+            
+            Servico.Atualizar($scope.item, $scope.etag).then(function () {
+
+                // Exibe a pop-up
+                $("#successedit").modal("show");
+
+                // Carrega a tela novamente
+                $scope.pesquisar();
+
+                // Fecha a modal
+                fecharModal();
+
+            });
+        }
+        
+        // Método que carrega o código sugestionado para o usuário
+        $scope.carregarCodigoSugestao = function (objeto, atributoID) {                        
+            
+            // Se o usuário selecionou algo
+            if (objeto != null) {
+                
+                // Faz a pesquisa
+                Servico.SelecionarCodigo(objeto).then(function (data) {
+                    // Preenche o campo                    
+                    objeto[atributoID] = data;
+                    
+                });
+                
+            } else {
+
+                // Limpa o campo
+                $scope.item[atributoID] = null;
+                
+            }            
+        }
+
+        // Método que faz a ordenação
+        $scope.ordenarPor = function (campo) {
+            $scope.criterioDeOrdenacao = campo;
+            $scope.direcaoDaOrdenacao = !$scope.direcaoDaOrdenacao;
+        };
+
+        //Função para efetuar a exportação da tabela indicada
+        $scope.exportarDados = function () {
+
+            // Redireciona para a url indicada
+            window.open($rootScope.retornarURLRelativa() + $scope.title.replace('Controller', '') + '/Exportar?' + $.param($scope.pesquisa), "_blank");
+
+        };
+
+        //Função para validar campo preenchido, false para campo vazio/nulo
+        $scope.validarCampoPreenchido = function (campo) {
+            if (angular.isUndefined(campo) ||
+               campo == null ||
+               campo == '')
+                return false;
+            return true;
+        }
+
+        // Verifica para abrir a confirmação
+        $scope.abrirConfirmacao = function (edicao, modal) {
+            var formulario;
+
+            // Verifica se é edição ou não
+            if (!edicao)
+                formulario = $scope.inclusao;
+            else
+                formulario = $scope.edicao;
+
+            $rootScope.exibeMensagemConsole(modal);
+            // Verifica se pode abrir a modal pra confirmar
+            $rootScope.validarFormulario(formulario).then(function (resultado) {
+
+                // Verifica se abre a popup
+                if (!resultado) {
+                    $("#" + modal + "").modal("show");
+                }
+
+            });
+        }
+    }
+})();
+
+/* TheController.js */
+
+(function () {
+    'use strict';
+
+    // Criando o controlador
+    angular
+        .module('AppAngular')
+        .controller('FeatureController', controllerFeature);
+
+    // Adicionando os modulos que irão ser utilizados no controlador
+    controllerFeature.$inject = ['$scope', '$http', '$controller', 'FeatureServico'];
+
+    // Controlador
+    function controllerFeature($scope, $http, $controller, FeatureServico) {
+
+        // Instanciando o controlador base
+        $controller('BaseController',
+            {
+                $scope: $scope,
+                Servico: FeatureServico
+            });
+
+        // Retorna o item default do controlador
+        $scope.retornarItemDefault = function()
+        {
+            return {
+                ProdutoID: null,
+                Cod: "",
+                ParametroX: "",
+                SituacaoID: true,
+                Situacao: "A",
+                Filtro: false
+            };
+        }
+
+        // Titulo do controlador
+        $scope.title = 'FeatureController';
+
+        // Registro no bind de pesquisa
+        $scope.pesquisa = $scope.retornarItemDefault();
+
+        $scope.executar = function (eInclusao) {
+
+            //Cria o campo e seta os valores que serão validados a duplicidade
+            $scope.itemValidacao = [];
+            $scope.itemValidacao = {
+                ProdutoID: $scope.item.ProdutoID,
+                Cod: $scope.item.Cod,
+                ParametroX: $scope.item.ParametroX,
+                Filtro: true,
+                IndicadorInclusao: eInclusao
+            };
+
+            //efetua validação
+            FeatureServico.ValidarDuplicidade($scope.itemValidacao).then(function () {
+                
+                if (eInclusao == 'true') {
+
+                    // Exibe a pop-up
+                    $("#confirmadd").modal("hide");
+
+                    FeatureServico.Inserir($scope.item).then(function () {
+
+                        // Exibe a pop-up
+                        $("#successadd").modal("show");
+
+                        // Carrega a tela novamente                        
+                        $scope.pesquisar();
+
+                    });
+                }
+                else {
+
+                    // Exibe a pop-up
+                    $("#confirmedit").modal("hide");
+
+                    FeatureServico.Atualizar($scope.item, $scope.etag).then(function () {
+
+                        // Exibe a pop-up
+                        $("#successedit").modal("show");
+
+                        // Carrega a tela novamente
+                        $scope.pesquisar();
+
+                    });
+                }
+            },
+            function () {
+
+                // Se for inclusão
+                if (eInclusao == 'true')
+                    $("#confirmadd").modal("hide");
+                else
+                    $("#confirmedit").modal("hide");
+
+            });
+
+        }
+
+        // Método chamado no load da página
+        $scope.carregarTela();
+
+    }
+
+})();
+
+
+/* TheBaseService.js */
+
+(function () {
+    'use strict';
+
+    // Criando o serviço (factory)
+    angular
+        .module('AppAngular')
+        .factory('AppAngularBaseServico', AppAngularBaseServico);
+
+    // Adicionando os modulos que irão ser utilizados no serviço (factory)
+    AppAngularBaseServico.$inject = ['$http', '$location', '$rootScope'];
+
+    // Serviço (factory)
+    function AppAngularBaseServico($http, $location, $rootScope) {
+        
+        // Tratamento AntiForgeryToken
+        $http.defaults.headers.common['RequestVerificationToken'] = angular.element("body").attr('AppAngular-token-validacao');
+        
+         // Construtor
+        var AppAngularBaseServico = function (controller) {
+
+            if (controller)
+            {
+                var caminho = "";
+
+                // Verifica qual é o host que está sendo executado
+                var host = $location.host();
+
+                // Para cada host encontrado
+                switch (host) {
+                    case "localhost":
+                    case "A":
+                    case "B.com.br":
+                    case "C.com.br":
+                        caminho = "/" + $location.absUrl().split("/")[3] + "/Api/";
+                        break;
+                    case "AppAngularwebdev1.intra":
+                    case "AppAngularwebdev2.intra":
+                    default:
+                        caminho = "/Api/";
+                }
+
+                this.controller = controller;
+                this.api = caminho;
+
+                // Variáveis locais
+                this.urlSelecionar = '/Selecionar';
+                this.urlSelecionarCodigo = '/SelecionarCodigo';
+                this.urlInserir = '/Inserir';
+                this.urlExcluir = '/Excluir';
+                this.urlAtualizar = '/Atualizar';
+                this.urlValidarDuplicidade = '/ValidarDuplicidade';
+            }
+
+        };
+
+        // Método padrão de Selecionar
+        AppAngularBaseServico.prototype.Selecionar = function (parametros) {
+
+            // Recupera a controller que está em execução
+            var execucaoAtual = this.controller;
+            
+            return $http({
+                url: this.api + this.controller + this.urlSelecionar,
+                method: "GET",
+                params: parametros
+            }).then(function loadDataSuccess(result) {
+
+                return result.data;
+            });
+
+        };
+
+        // Método padrão de Inserir
+        AppAngularBaseServico.prototype.Inserir = function (parametros) {
+            return $http.post(this.api + this.controller + this.urlInserir, parametros);
+        }
+
+        // Método padrão de Excluir
+        AppAngularBaseServico.prototype.Excluir = function (parametros) {
+            return $http.delete(this.api + this.controller + this.urlExcluir + '?' + parametros);
+        }
+
+        // Método padrão de Atualizar
+        AppAngularBaseServico.prototype.Atualizar = function (parametros, etag) {
+            return $http({
+                url: this.api + this.controller + this.urlAtualizar,
+                method: "PUT",
+                data: parametros,
+                headers: { 'If-Match': etag }
+            }).then(function loadDataSuccess(result) {
+                return result.data;
+            });
+        }
+
+        // Método Selecionar da classe nova
+        AppAngularBaseServico.prototype.SelecionarCodigo = function (parametros) {
+            return $http({
+                url: this.api + this.controller + this.urlSelecionarCodigo,
+                method: "GET",
+                params: parametros
+            }).then(function loadDataSuccess(result) {
+                return result.data;
+            });
+        };
+
+        // Método Selecionar da classe nova
+        AppAngularBaseServico.prototype.ValidarDuplicidade = function (parametros) {
+            return $http({
+                url: this.api + this.controller + this.urlValidarDuplicidade,
+                method: "GET",
+                params: parametros
+            }).then(function loadDataSuccess(result) {
+                return result.data;
+            });
+        };
+
+        // Retorno o serviço (factory)
+        return AppAngularBaseServico;
+    }
+})();
+
+
+/* TheService.js */
+
+(function () {
+    'use strict';
+
+    // Criando o serviçp (factory)
+    angular
+        .module('AppAngular')
+        .factory('FeatureServico', FeatureServico);
+
+    // Adicionando os módulos que irão ser utilizados no serviço (factory)
+    FeatureServico.$inject = ['$http', 'AppAngularBaseServico'];
+
+    // Serviço (factory)
+    function FeatureServico($http, AppAngularBaseServico) {
+
+        // Construtor
+        var FeatureServico = function () {
+
+            // Recuperando o construtor da classe base
+            AppAngularBaseServico.apply(this, arguments);
+
+        };
+
+        // Realizando a herança
+        FeatureServico.prototype = new AppAngularBaseServico();
+
+        // Retorno o serviço (factory)
+        return new FeatureServico('Feature');
+    }
+})();
+
+
+/* APIBaseController.js */
+public class BaseController<K> : ApiController where K : objX
+{
+	[HttpGet]
+	public Collection<T> Selecionar([FromUri]K obj)
+	{
+		this.lista = obj.Selecionar(obj);            
+	}
+}
+
